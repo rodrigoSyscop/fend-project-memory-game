@@ -14,6 +14,12 @@ let clockOff = true;
 let timer = 0;
 let clockCounter;
 
+/* stars */
+let stars = 3;
+
+/* matched pair of cards */
+let matchedPairs = 0;
+
 /*
  * Display the cards on the page
  *   [x] shuffle the list of cards using the provided "shuffle" method below
@@ -74,9 +80,16 @@ deck.addEventListener('click', event => {
             checkForMatch(toggledCards[0], toggledCards[1]);
             addMove();
             checkScore();
+            if (matchedPairs === 8) {
+                gameOver();
+            }
         }
     }
 });
+
+
+$('.replay')[0].addEventListener('click', replayGame);
+$('.restart')[0].addEventListener('click', restartGame);
 
 /* Open a card toggling its open and show classes. */
 function toggleCard(card) {
@@ -101,6 +114,7 @@ function checkForMatch(card1, card2) {
         card1.classList.toggle('match');
         card2.classList.toggle('match');
         toggledCards = [];
+        matchedPairs++;
     } else {
         setTimeout( () => {
             toggleCard(card1);
@@ -135,10 +149,13 @@ function checkScore() {
     const starList = document.querySelectorAll('.stars li');
     if (moves === 18 ) {
         starList[2].style.display = 'none';
+        stars--;
     } else if (moves === 25) {
         starList[1].style.display = 'none';
+        stars--;
     } else if (moves === 30) {
         starList[0].style.display = 'none';
+        stars--;
     }
 }
 
@@ -157,4 +174,64 @@ function displayTime() {
 
 function stopClock() {
     clearInterval(clockCounter);
+}
+
+function toggleModal() {
+    $('#scoreModal').modal('toggle');
+}
+
+function refreshModalStats() {
+    const timerStat = $('#modal__timer')[0];
+    const movesStat = $('#modal__moves')[0];
+    const starsStat = $('#modal__stars')[0];
+
+    timerStat.innerHTML = timer;
+    starsStat.innerHTML = stars;
+    movesStat.innerHTML = moves;
+
+}
+
+function resetTimer() {
+    stopClock();
+    clockOff = true;
+    timer = 0;
+    displayTime()
+}
+
+function resetMoves() {
+    moves = 0;
+    $('.moves')[0].innerHTML = moves;
+}
+
+function resetStars() {
+    stars = 3;
+    starList = $('.stars li');
+    for (star of starList) {
+        star.style.display = 'inline';
+    }
+}
+
+function resetCards() {
+    const cards = $('.deck li');
+    for (let card of cards) {
+        card.className = 'card';
+    }
+}
+
+function restartGame() {
+    resetStars();
+    resetTimer();
+    resetMoves();
+    resetCards();
+    matchedPairs = 0;
+    shuffleDeck();
+}
+function replayGame() {
+    restartGame();
+    toggleModal();
+}
+function gameOver() {
+    stopClock()
+    refreshModalStats()
+    toggleModal();
 }
