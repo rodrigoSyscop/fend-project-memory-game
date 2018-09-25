@@ -1,7 +1,8 @@
 /*
  * Create a list that holds all of your cards
  */
-const deck = document.querySelector('.deck');
+/*const deck = document.querySelector('.deck');*/
+const deck = $('.deck').first();
 
 /* Opened Cards */
 let toggledCards = [];
@@ -14,10 +15,10 @@ let clockOff = true;
 let timer = 0;
 let clockCounter;
 
-/* stars */
+/* Initial number of stars*/
 let stars = 3;
 
-/* matched pair of cards */
+/* Matched pair of cards */
 let matchedPairs = 0;
 
 /*
@@ -27,10 +28,10 @@ let matchedPairs = 0;
  *   [x] add each card's HTML to the page
  */
 function shuffleDeck() {
-    const cardsToShuffle = Array.from(document.querySelectorAll('.deck li'));
+    const cardsToShuffle = Array.from($('.deck li'));
     const shuffledCards = shuffle(cardsToShuffle);
     for (card of shuffledCards) {
-        deck.appendChild(card);
+        deck.append(card);
     }
 }
 shuffleDeck();
@@ -60,21 +61,23 @@ function shuffle(array) {
  *    [x] if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
  *    [x] if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
  *    [x] increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    [ ] if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
+ *    [x] if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
 
 /* set up the event listener for a card. */
-deck.addEventListener('click', event => {
-    const clickTarget = event.target;
-    if (isClickValid(clickTarget)) {
-        /* first move */
+deck.click('.card', function (event) {
+
+    const target = $(event.target);
+
+    if (isClickValid(target)) {
+        /* first move, start the clock counter (timer)*/
         if (clockOff) {
             clockOff = false;
             startClock();
         }
-        toggleCard(clickTarget);
-        addToggleCard(clickTarget);
+        toggleCard(target);
+        addToggleCard(target);
 
         if (toggledCards.length === 2) {
             checkForMatch(toggledCards[0], toggledCards[1]);
@@ -87,14 +90,14 @@ deck.addEventListener('click', event => {
     }
 });
 
-
-$('.replay')[0].addEventListener('click', replayGame);
-$('.restart')[0].addEventListener('click', restartGame);
+/* When clicling on modal's replay button */
+$('.replay').click(replayGame);
+/* When clicking on clock's restart icon */
+$('.restart').click(restartGame);
 
 /* Open a card toggling its open and show classes. */
 function toggleCard(card) {
-    card.classList.toggle('open');
-    card.classList.toggle('show');
+    card.toggleClass('open show');
 }
 
 /* Add a card to toggleCards array */
@@ -105,14 +108,14 @@ function addToggleCard(card) {
 
 /* Get the "suit" of a card */
 function getSuit(card) {
-    return card.firstElementChild.className;
+    return card.children().first().attr('class');
 }
 
 /* Check for a match */
 function checkForMatch(card1, card2) {
     if (getSuit(card1) === getSuit(card2)) {
-        card1.classList.toggle('match');
-        card2.classList.toggle('match');
+        card1.toggleClass('match');
+        card2.toggleClass('match');
         toggledCards = [];
         matchedPairs++;
     } else {
@@ -132,8 +135,7 @@ function checkForMatch(card1, card2) {
 */
 function isClickValid(target) {
     return (
-        target.classList.contains('card') &&
-        !target.classList.contains('match') &&
+        !target.hasClass('match') &&
         toggledCards.length < 2 &&
         !toggledCards.includes(target)
     );
@@ -141,24 +143,19 @@ function isClickValid(target) {
 
 function addMove() {
     moves++;
-    const movesText = document.querySelector('.moves');
-    movesText.innerHTML = moves;
+    $('.moves').text(moves);
 }
 
 function checkScore() {
-    const starList = document.querySelectorAll('.stars li');
-    if (moves === 18 ) {
-        starList[2].style.display = 'none';
-        stars--;
-    } else if (moves === 25) {
-        starList[1].style.display = 'none';
-        stars--;
-    } else if (moves === 30) {
-        starList[0].style.display = 'none';
-        stars--;
+    const starList = $('.stars li');
+    if (moves === 12 ) {
+        removeStar();
+    } else if (moves === 18) {
+        removeStar();
+    } else if (moves === 22) {
+        removeStar();
     }
 }
-
 
 function startClock() {
     clockCounter = setInterval(() => {
@@ -168,10 +165,16 @@ function startClock() {
 }
 
 function displayTime() {
-    const clock = document.querySelector('.clock');
-    clock.innerHTML = timer;
+    const clock = $('.clock');
+    clock.text(timer);
 }
 
+function removeStar() {
+    stars--;
+    $('.stars li').filter(function() {
+        return $(this).css('display') === 'inline-block';
+     }).first().css('display', 'none');
+}
 function stopClock() {
     clearInterval(clockCounter);
 }
@@ -181,14 +184,9 @@ function toggleModal() {
 }
 
 function refreshModalStats() {
-    const timerStat = $('#modal__timer')[0];
-    const movesStat = $('#modal__moves')[0];
-    const starsStat = $('#modal__stars')[0];
-
-    timerStat.innerHTML = timer;
-    starsStat.innerHTML = stars;
-    movesStat.innerHTML = moves;
-
+    $('#modal__timer').text(timer);
+    $('#modal__moves').text(moves);
+    $('#modal__stars').text(stars);
 }
 
 function resetTimer() {
@@ -200,20 +198,16 @@ function resetTimer() {
 
 function resetMoves() {
     moves = 0;
-    $('.moves')[0].innerHTML = moves;
+    $('.moves').text(moves);
 }
 
 function resetStars() {
     stars = 3;
-    starList = $('.stars li');
-    for (star of starList) {
-        star.style.display = 'inline';
-    }
+    starList = $('.stars li').css('display', 'inline');
 }
 
 function resetCards() {
-    const cards = $('.deck li');
-    for (let card of cards) {
+    for (let card of $('.deck li')) {
         card.className = 'card';
     }
 }
