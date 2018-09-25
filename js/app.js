@@ -6,6 +6,8 @@ const deck = document.querySelector('.deck');
 /* Opened Cards */
 let toggledCards = [];
 
+/* Number of Moves */
+let moves = 0;
 
 /*
  * Display the cards on the page
@@ -46,7 +48,7 @@ function shuffle(array) {
  *  [x] if the list already has another card, check to see if the two cards match
  *    [x] if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
  *    [x] if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    [ ] increment the move counter and display it on the page (put this functionality in another function that you call from this one)
+ *    [x] increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    [ ] if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
@@ -60,6 +62,8 @@ deck.addEventListener('click', event => {
 
         if (toggledCards.length === 2) {
             checkForMatch(toggledCards[0], toggledCards[1]);
+            addMove();
+            checkScore();
         }
     }
 });
@@ -109,4 +113,21 @@ function isClickValid(target) {
         toggledCards.length < 2 &&
         !toggledCards.includes(target)
     );
+}
+
+function addMove() {
+    moves++;
+    const movesText = document.querySelector('.moves');
+    movesText.innerHTML = moves;
+}
+
+function checkScore() {
+    const starList = document.querySelectorAll('.stars li');
+    if (moves === 18 ) {
+        starList[2].style.display = 'none';
+    } else if (moves === 25) {
+        starList[1].style.display = 'none';
+    } else if (moves === 30) {
+        starList[0].style.display = 'none';
+    }
 }
