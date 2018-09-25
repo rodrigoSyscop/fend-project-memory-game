@@ -29,7 +29,7 @@ function shuffle(array) {
 /*
  * set up the event listener for a card. If a card is clicked:
  *  [x] display the card's symbol (put this functionality in another function that you call from this one)
- *  [ ] add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
+ *  [x] add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  [ ] if the list already has another card, check to see if the two cards match
  *    [ ] if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
  *    [ ] if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
@@ -38,15 +38,25 @@ function shuffle(array) {
  */
 
 const deck = document.querySelector('.deck');
+let toggledCards = [];
 
+/* set up the event listener for a card. */
 deck.addEventListener('click', event => {
     const clickTarget = event.target;
     if (clickTarget.classList.contains('card')) {
         toggleCard(clickTarget);
+        addToggleCard(clickTarget);
     }
 });
 
+/* Open a card toggling its open and show classes. */
 function toggleCard(card) {
     card.classList.toggle('open');
     card.classList.toggle('show');
+}
+
+/* Add a card to toggleCards array */
+function addToggleCard(card) {
+    toggledCards.push(card);
+    console.log(toggleCard);
 }
