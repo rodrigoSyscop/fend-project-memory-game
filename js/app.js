@@ -31,8 +31,8 @@ function shuffle(array) {
  *  [x] display the card's symbol (put this functionality in another function that you call from this one)
  *  [x] add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  [x] if the list already has another card, check to see if the two cards match
- *    [ ] if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    [ ] if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
+ *    [x] if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
+ *    [x] if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
  *    [ ] increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    [ ] if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
@@ -43,7 +43,7 @@ let toggledCards = [];
 /* set up the event listener for a card. */
 deck.addEventListener('click', event => {
     const clickTarget = event.target;
-    if (clickTarget.classList.contains('card') && toggledCards.length < 2 ) {
+    if (isClickValid(clickTarget)) {
         toggleCard(clickTarget);
         addToggleCard(clickTarget);
 
@@ -73,8 +73,29 @@ function getSuit(card) {
 /* Check for a match */
 function checkForMatch(card1, card2) {
     if (getSuit(card1) === getSuit(card2)) {
-        console.log('The cards do match!');
+        card1.classList.toggle('match');
+        card2.classList.toggle('match');
+        toggledCards = [];
     } else {
-        console.log("The cards doesn't match!");
+        setTimeout( () => {
+            toggleCard(card1);
+            toggleCard(card2);
+            toggledCards = [];
+        }, 1000);
     }
+}
+
+/* Check if:
+    - is a card.
+    - is not a matched card.
+    - opened cards is less than 2
+    - is not a opened card
+*/
+function isClickValid(target) {
+    return (
+        target.classList.contains('card') &&
+        !target.classList.contains('match') &&
+        toggledCards.length < 2 &&
+        !toggledCards.includes(target)
+    );
 }
