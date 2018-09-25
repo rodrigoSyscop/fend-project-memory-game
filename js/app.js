@@ -9,6 +9,11 @@ let toggledCards = [];
 /* Number of Moves */
 let moves = 0;
 
+/* clock state */
+let clockOff = true;
+let timer = 0;
+let clockCounter;
+
 /*
  * Display the cards on the page
  *   [x] shuffle the list of cards using the provided "shuffle" method below
@@ -57,6 +62,11 @@ function shuffle(array) {
 deck.addEventListener('click', event => {
     const clickTarget = event.target;
     if (isClickValid(clickTarget)) {
+        /* first move */
+        if (clockOff) {
+            clockOff = false;
+            startClock();
+        }
         toggleCard(clickTarget);
         addToggleCard(clickTarget);
 
@@ -130,4 +140,21 @@ function checkScore() {
     } else if (moves === 30) {
         starList[0].style.display = 'none';
     }
+}
+
+
+function startClock() {
+    clockCounter = setInterval(() => {
+        timer++;
+        displayTime()
+    }, 1000);
+}
+
+function displayTime() {
+    const clock = document.querySelector('.clock');
+    clock.innerHTML = timer;
+}
+
+function stopClock() {
+    clearInterval(clockCounter);
 }
