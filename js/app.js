@@ -150,8 +150,8 @@ function checkForMatch(card1, card2) {
 /**
  * @description Check if:
  *  - game is not finished
+ *  - target is a card
  *  - target is not open
- *  - target is not a matched card
  *  - there is less than 2 cards in toggledCards list
  *  = the card in is not already in toggledCards list
  * @param {object} target card
@@ -159,8 +159,8 @@ function checkForMatch(card1, card2) {
 function isClickValid(target) {
     return (
         !isGameOver &&
+        target.hasClass('card') &&
         !target.hasClass('open') &&
-        !target.hasClass('match') &&
         toggledCards.length < 2 &&
         !toggledCards.includes(target)
     );
